@@ -10,14 +10,14 @@
       });
   }
 
-  function extractDictionary(textArray) {
+  function extractDictionary(textArray, stopwords = []) {
     var dict = {},
       keys = [],
       words;
     textArray = Array.isArray(textArray) ? textArray : [textArray];
     textArray.forEach(function (text) {
       words = tokenize(text);
-      words.forEach(function (word) {
+      words.filter(x=> stopwords.filter(y => y===x).length ===0 ).forEach(function (word) {
         word = word.toLowerCase();
         if (!dict[word] && word !== '') {
           dict[word] = 1;
@@ -34,8 +34,8 @@
     };
   }
 
-  function bow(text, vocabulary) {
-    var dict = extractDictionary([text]).dict,
+  function bow(text, vocabulary, stopwords = []) {
+    var dict = extractDictionary([text], stopwords).dict,
       vector = [];
 
     vocabulary.words.forEach(function (word) {
@@ -44,9 +44,9 @@
     return vector;
   }
 
-  function tf(word, text) {
+  function tf(word, text, stopwords =[]) {
     var input = word.toLowerCase();
-    var dict = extractDictionary(text).dict;
+    var dict = extractDictionary(text, stopwords).dict;
     return dict[input] / tokenize(text).length;
   }
 
